@@ -25,10 +25,12 @@ let messages = {
   1: {
     id: '1',
     text: 'Hello World',
+    userId: '1',
   },
   2: {
     id: '2',
     text: 'By World',
+    userId: '2',
   },
 };
 
@@ -55,6 +57,7 @@ const schema = gql`
     id: ID!
     text: String!
     user: User!
+    
   }
 
 
@@ -103,8 +106,13 @@ const resolvers = {
   },
 
   Message: {
-    user: () => {
-      return me;
+    //user: () => {
+    //  return me;
+    //},
+
+    // utilizando o atributo userId da mensagem
+    user: message => {
+      return users[message.userId];
     },
   },
 
