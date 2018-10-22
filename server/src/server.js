@@ -9,15 +9,17 @@ app.use(cors());
 let users = {
   1: {
     id: '1',
-    username: 'José Pereira da Silva',
+    username: 'José',
+    lastname: 'Pereira da Silva'
   },
   2: {
     id: '2',
-    username: 'João Batman',
+    username: 'João',
+    lastname: 'Batman'
   },
 };
 
-const me = users[1];
+//const me = users[1];
 
 
 
@@ -31,6 +33,7 @@ const schema = gql`
   type User {
     id: ID!
     username: String!
+    lastname: String!
   }
 `;
 
@@ -42,14 +45,25 @@ const resolvers = {
     user: (parent, args) => { 
       return users[args.id];
     },
-    me: () => {
+    //me: () => {
+    //  return me;
+    //},
+    me: (parent, args, context) => {
+      
+      //return context.me;
+      
+      let me = context.me;
+      me.username = me.username + " " + context.opa;
       return me;
     },
   },
   User: {
     //username: () => 'Hans', // redefine o username de todos os registros
+    //username: parent => { // parent contém os dados previamente obtidos pelo resolver
+    //  return parent.username;
+    //}
     username: parent => { // parent contém os dados previamente obtidos pelo resolver
-      return parent.username;
+      return `${parent.username} - ${parent.lastname}`;
     }
   },
 };
@@ -58,6 +72,10 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
+  context: { // passando valores via contexto aos resolvers
+    me: users[1],
+    opa: 'sim'
+  },
 });
 
 server.applyMiddleware({ app, path: '/graphql' });
