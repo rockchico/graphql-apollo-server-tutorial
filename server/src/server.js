@@ -25,6 +25,7 @@ const schema = gql`
   type Query {
     me: User
     user(id: ID!): User
+    users: [User!]
   }
 
   type User {
@@ -35,12 +36,21 @@ const schema = gql`
 
 const resolvers = {
   Query: {
+    users: () => {
+      return Object.values(users);
+    },    
     user: (parent, args) => { 
       return users[args.id];
     },
     me: () => {
       return me;
     },
+  },
+  User: {
+    //username: () => 'Hans', // redefine o username de todos os registros
+    username: parent => { // parent contém os dados previamente obtidos pelo resolver
+      return parent.username;
+    }
   },
 };
 
