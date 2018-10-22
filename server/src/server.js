@@ -10,12 +10,14 @@ let users = {
   1: {
     id: '1',
     username: 'José',
-    lastname: 'Pereira da Silva'
+    lastname: 'Pereira da Silva',
+    messageIds: [1],
   },
   2: {
     id: '2',
     username: 'João',
-    lastname: 'Batman'
+    lastname: 'Batman',
+    messageIds: [2],
   },
 };
 
@@ -30,6 +32,21 @@ let messages = {
   2: {
     id: '2',
     text: 'By World',
+    userId: '2',
+  },
+  3: {
+    id: '3',
+    text: 'bla bla bla',
+    userId: '2',
+  },
+  4: {
+    id: '4',
+    text: 'opa opa opa',
+    userId: '2',
+  },
+  5: {
+    id: '5',
+    text: 'ble ble ble',
     userId: '2',
   },
 };
@@ -51,6 +68,7 @@ const schema = gql`
     id: ID!
     username: String!
     lastname: String!
+    messages: [Message!]
   }
 
   type Message {
@@ -102,7 +120,14 @@ const resolvers = {
     //}
     username: parent => { // parent contém os dados previamente obtidos pelo resolver
       return `${parent.username} - ${parent.lastname}`;
-    }
+    },
+
+    messages: user => {
+      return Object.values(messages).filter(
+        message => message.userId === user.id,
+      );
+    },
+
   },
 
   Message: {
