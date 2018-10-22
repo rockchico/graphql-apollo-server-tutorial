@@ -1,6 +1,7 @@
 import cors from 'cors';
 import express from 'express'
 import { ApolloServer, gql } from 'apollo-server-express'
+//import uuidv4 from 'uuid/v4';
 
 const app = express();
 app.use(cors());
@@ -78,6 +79,10 @@ const schema = gql`
     
   }
 
+  type Mutation {
+    createMessage(text: String!): Message!
+  }
+
 
 `;
 
@@ -141,6 +146,28 @@ const resolvers = {
     },
   },
 
+
+  Mutation: {
+    createMessage: (parent, args, context) => {
+      const id = '_' + Math.random().toString(36).substr(2, 9);
+      
+      const message = {
+        id,
+        text: args.text,
+        userId: context.me.id,
+      };
+
+      // adiciona a mensagem na lista
+      messages[id] = message;
+      users[context.me.id].messageIds.push(id);
+
+      return message;
+    },
+  },
+
+
+
+
 };
 
 
@@ -148,7 +175,7 @@ const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
   context: { // passando valores via contexto aos resolvers
-    me: users[1],
+    me: users[2],
     opa: 'sim'
   },
 });
