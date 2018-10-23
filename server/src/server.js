@@ -22,7 +22,7 @@ const server = new ApolloServer({
   resolvers,
   context: { // passando valores via contexto aos resolvers
     models,
-    me: models.users[2],
+    me: models.users[1],
     opa: 'sim'
   },
 });
