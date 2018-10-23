@@ -1,7 +1,12 @@
+import 'dotenv/config';
 import cors from 'cors';
 import express from 'express'
 import { ApolloServer, gql } from 'apollo-server-express'
 //import uuidv4 from 'uuid/v4';
+
+
+console.log('Hello Node.js project.');
+console.log(process.env.MY_DATABASE_PASSWORD);
 
 const app = express();
 app.use(cors());
@@ -82,6 +87,7 @@ const schema = gql`
   type Mutation {
     createMessage(text: String!): Message!
     deleteMessage(id: ID!): Boolean!
+    updateMessage(id: ID!, text: String!): Boolean!
   }
 
 
@@ -183,6 +189,30 @@ const resolvers = {
 
       return true;
     },
+
+    updateMessage: (parent, { id, text }) => {
+      
+      let message = Object.values(messages).filter(
+        message => message.id === id,
+      );
+
+      console.log(message.length)
+
+
+      if (message.length === 0) {
+        return false;
+      } else {
+        messages[id].text = text;
+      }
+
+      
+
+      return true;
+    },
+
+
+
+    
 
   },
 
